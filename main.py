@@ -22,7 +22,7 @@ class CNFFormula:
                     #print(f"Reading line: {line}")
 
                     # Skip comments and last line with '%'
-                    if line.startswith('c') or line.startswith('%'):
+                    if line.startswith('c') or line.startswith('%') or line.startswith('0'):
                         continue
 
                     # Gets the numbers of variables and clauses from problem line
@@ -64,7 +64,7 @@ def parseCnf(cnf_files):
             print(f"Successfully parsed {file_name}")
         else: print(f"Error parsing file: {file_name}")
 
-    return cnf.num_variables, cnf.clauses
+    return cnf.num_variables, len(cnf.clauses), cnf.clauses
 
 
 
@@ -73,14 +73,13 @@ def main():
     maxFlips = 100
     maxRestarts = 10
     cnf_files = ["CNF_Formulas/uf20-0156.cnf"]
-    #cnf_files = ["CNF_Formulas/uf75-07.cnf"]
-    numVariables, listofClauses= parseCnf(cnf_files)
-
+    #cnf_files = ["CNF_Formulas/uf50-01.cnf"]
+    numVariables, noOfClauses, listofClauses= parseCnf(cnf_files)
 
     bestAssignment, bestFitness = gsat(listofClauses, maxFlips, maxRestarts, numVariables)
 
     print(f"Best assignment:  {bestAssignment}")
-    print(f"Best fitness:  {bestFitness}")
+    print(f"Best fitness:  {bestFitness} clauses satisfied, out of {noOfClauses}")
 
 
 
