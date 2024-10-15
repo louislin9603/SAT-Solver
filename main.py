@@ -1,3 +1,5 @@
+import os       # For getting every file in directory (CNF Formulas)
+
 # CNF Class to Represent CNF Formulas
 class CNFFormula:
 
@@ -219,27 +221,30 @@ class DPLLSolver:
 def main():
     print("Main ran")
 
-    cnf_files = ["CNF Formulas\\uf20-0156.cnf"]
+    cnf_files = "CNF Formulas\\"
 
-    for file_name in cnf_files:
+    for file_name in os.listdir(cnf_files):
 
-        cnf = CNFFormula()
+        file_path = os.path.join(cnf_files, file_name)
 
-        if cnf.parse_dimacs(file_name):
-            print(f"Successfully parsed {file_name}")
-            print(f"Number of variables: {cnf.num_variables}")
-            print(f"Distinct variables: {cnf.variables}")
+        if file_name.endswith(".cnf"):
+            cnf = CNFFormula()
 
-            solver = DPLLSolver()
+            if cnf.parse_dimacs(file_path):
+                print(f"\nSuccessfully parsed {file_name}")
+                #print(f"Number of variables: {cnf.num_variables}")
+                print(f"Distinct variables: {cnf.variables}")
 
-            if solver.solve(cnf):
-                print("Formula satisfied")
-                #print("Assignment: ", solver.assignment)
-                for var, value in sorted(solver.assignment.items()):
-                    print(f"{var}: {'True' if value else 'False'}", end=" ")
-            else:
-                print("Formula is not satisfiable")
-            print("\nStatistics for DPLL: ", solver.get_statistics())
+                solver = DPLLSolver()
+
+                if solver.solve(cnf):
+                    print("Formula satisfied")
+                    #print("Assignment: ", solver.assignment)
+                    for var, value in sorted(solver.assignment.items()):
+                        print(f"{var}: {'True' if value else 'False'}", end=" ")
+                else:
+                    print("Formula is not satisfiable")
+                print("\nStatistics for DPLL: ", solver.get_statistics())
 
 if __name__ == "__main__":
     main()
