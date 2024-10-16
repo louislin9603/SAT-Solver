@@ -73,7 +73,7 @@ def main():
 
     maxFlips = 100
     maxRestarts = 10
-    cnf_files = ["CNF_Formulas/uf20-0156.cnf"]
+    cnf_files = ["CNF Formulas/uf20-0156.cnf"]
     #cnf_files = ["CNF_Formulas/uf50-01.cnf"]
     numVariables, noOfClauses, listofClauses= parseCnf(cnf_files)
 
