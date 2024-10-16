@@ -1,4 +1,8 @@
+# This program is the implementation for DPLL Solver and WalkSAT
+
 import os       # For getting every file in directory (CNF Formulas)
+import random 
+import time
 
 # CNF Class to Represent CNF Formulas
 class CNFFormula:
@@ -217,6 +221,89 @@ class DPLLSolver:
     def get_statistics(self):
         return self.statistics
 
+# WalkSAT Solver Implementation
+class WalkSAT:
+    def __init__(self):
+        self.formula = None
+        self.assignment = {}
+        self.p = 0.5          # Probability of random walk (0.5 by default)
+        self.max_flips = 1000 # Maximum number of flips
+        self.statistics = {
+            'flips': 0,           # Number of flips made
+            'satisfied_clauses': 0  # Number of satisfied clauses
+        }
+
+    def solve(self, formula, p=0.5, max_flips=1000):
+        self.formula = formula
+        self.p = p
+        self.max_flips = max_flips
+
+        # Initialize a random assignment
+        self.assignment = {var: random.choice([True, False]) for var in self.formula.variables}
+
+        for flip in range(self.max_flips):
+            self.statistics['flips'] += 1
+
+            # Count and update satisfied clauses
+            self.statistics['satisfied_clauses'] = self._count_satisfied_clauses()
+
+            if self._all_clauses_satisfied(self.assignment):
+                return True
+
+            # Choose a random unsatisfied clause
+            unsatisfied_clause = self._choose_unsatisfied_clause()
+            if unsatisfied_clause is None:
+                continue
+
+            # Decide whether to flip a variable in the clause or randomly select one
+            if random.random() < self.p:
+                # Choose a variable randomly from the unsatisfied clause
+                var_to_flip = random.choice(unsatisfied_clause)
+            else:
+                # Choose the variable that, when flipped, maximizes the number of satisfied clauses
+                var_to_flip = self._choose_variable_to_flip(unsatisfied_clause)
+
+            # Flip the chosen variable
+            self.assignment[abs(var_to_flip)] = not self.assignment[abs(var_to_flip)]
+
+        return False  # Max flips reached without satisfying all clauses
+
+    # Check if all clauses are satisfied
+    def _all_clauses_satisfied(self, assignment):
+        
+        return all(any((lit > 0) == assignment.get(abs(lit), None) for lit in clause)
+                   for clause in self.formula.clauses)
+
+    # Count how many clauses are satisfied by the current assignment
+    def _count_satisfied_clauses(self):
+        return sum(1 for clause in self.formula.clauses if any((lit > 0) == self.assignment.get(abs(lit), None) for lit in clause))
+    
+    # Choose a random unsatisfied clause
+    def _choose_unsatisfied_clause(self):
+        unsatisfied_clauses = [clause for clause in self.formula.clauses if not any((lit > 0) == self.assignment.get(abs(lit), None) for lit in clause)]
+        return random.choice(unsatisfied_clauses) if unsatisfied_clauses else None
+
+    # Choose the variable to flip that maximizes the number of satisfied clauses
+    def _choose_variable_to_flip(self, clause):
+        
+        best_var = None
+        best_satisfied_count = -1
+
+        for var in clause:
+            # Flip the variable temporarily
+            temp_assignment = self.assignment.copy()
+            temp_assignment[abs(var)] = not temp_assignment[abs(var)]
+            satisfied_count = sum(1 for c in self.formula.clauses if any((lit > 0) == temp_assignment.get(abs(lit), None) for lit in c))
+
+            if satisfied_count > best_satisfied_count:
+                best_satisfied_count = satisfied_count
+                best_var = var
+
+        return best_var
+
+    def get_statistics(self):
+        return self.statistics
+
 # Main
 def main():
     print("Main ran")
@@ -235,7 +322,8 @@ def main():
                 #print(f"Number of variables: {cnf.num_variables}")
                 print(f"Distinct variables: {cnf.variables}")
 
-                solver = DPLLSolver()
+                #solver = DPLLSolver()
+                solver = WalkSAT() 
 
                 if solver.solve(cnf):
                     print("Formula satisfied")
@@ -244,7 +332,7 @@ def main():
                         print(f"{var}: {'True' if value else 'False'}", end=" ")
                 else:
                     print("Formula is not satisfiable")
-                print("\nStatistics for DPLL: ", solver.get_statistics())
+                print("\nStatistics: ", solver.get_statistics())
 
 if __name__ == "__main__":
     main()
