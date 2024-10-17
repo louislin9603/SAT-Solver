@@ -1,9 +1,4 @@
-# This program is the implementation for GSAT Solver
-
-
-
 import random
-import os
 import time
 # CNF Class to Represent CNF Formulas
 
@@ -61,6 +56,7 @@ class CNFFormula:
             print(f"Error parsing file: {e}")
             return False
 
+
 def parseCnf(cnf_files):
     for file_name in cnf_files:
         cnf = CNFFormula()
@@ -71,40 +67,32 @@ def parseCnf(cnf_files):
 
     return cnf.num_variables, len(cnf.clauses), cnf.clauses
 
+
+
 def main():
 
+    
     maxFlips = 100
     maxRestarts = 10
+    cnf_files = ["CNF Formulas/uf20-0156.cnf"]
+    numVariables, noOfClauses, listofClauses= parseCnf(cnf_files)
 
-    # Folder path containing the CNF formula files
-    cnf_folder = "CNF Formulas"
+    bestAssignment, bestFitness, timeSpent = gsat(listofClauses, maxFlips, maxRestarts, numVariables)
 
-    # Get a list of all CNF files in the folder
-    cnf_files = [os.path.join(cnf_folder, file) for file in os.listdir(cnf_folder) if file.endswith('.cnf')]
+    print(f"Best assignment:  {bestAssignment}")
+    print(f"Best fitness:  {bestFitness} clauses satisfied, out of {noOfClauses}")
+    print(f"Time spent: {timeSpent}")
+    
 
-    # Iterate over each file
-    for cnf_file in cnf_files:
-        print(f"Processing file: {cnf_file}")
-        try:
-            # Parse file
-            numVariables, noOfClauses, listofClauses = parseCnf([cnf_file])  # Pass the file path as a list
-                
-            # Run GSAT on file
-            bestAssignment, bestFitness, totalTime = gsat(listofClauses, maxFlips, maxRestarts, numVariables)
-                
-            # Print the results for the current file
-            print(f"Best assignment for {cnf_file}: {bestAssignment}")
-            print(f"Best fitness for {cnf_file}: {bestFitness} clauses satisfied, out of {noOfClauses}")
-            print(f"Total time to run: {totalTime}")
-            print("-" * 50)
-        except Exception as e:
-            print(f"Error processing file {cnf_file}: {e}")
+
 
 # Assign random true/false values to each variable
 def randomAssignment(numVariables):
 
     # Return the assignment as a dictionary
     return {i: random.choice([True, False]) for i in range(1, numVariables + 1)}
+
+
 
 # Check how many clauses are satisfied by the current assignment
 def evaluateFitness(clauses, assignment):
@@ -127,10 +115,13 @@ def evaluateFitness(clauses, assignment):
             satisfied += 1
     return satisfied
 
+
+
 # Greedy SAT Algorithm
 def gsat(clauses, max_flips, max_restarts, numVariables):
 
-    startTime = time.time() #timer
+    startTime = time.time()
+    totalTime = 0
     # Store best assignment and fitness we come across
     bestAssignment = None
     bestFitness = 0
@@ -147,7 +138,8 @@ def gsat(clauses, max_flips, max_restarts, numVariables):
 
             # If all clauses satisfied, go home, we won
             if currentFitness == len(clauses):
-                return assignment, currentFitness
+                totalTime = time.time() - startTime
+                return assignment, currentFitness, totalTime
 
             # Find the best variable to flip
             bestVarToFlip = None
@@ -180,15 +172,6 @@ def gsat(clauses, max_flips, max_restarts, numVariables):
 
     totalTime = time.time() - startTime
     return bestAssignment, bestFitness, totalTime
-
-
-
-
-
-
-
-
-
 
 
 
