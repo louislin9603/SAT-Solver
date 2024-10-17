@@ -3,6 +3,8 @@
 
 
 import random
+import os
+import time
 # CNF Class to Represent CNF Formulas
 
 class CNFFormula:
@@ -73,14 +75,30 @@ def main():
 
     maxFlips = 100
     maxRestarts = 10
-    cnf_files = ["CNF Formulas/uf20-0156.cnf"]
-    #cnf_files = ["CNF_Formulas/uf50-01.cnf"]
-    numVariables, noOfClauses, listofClauses= parseCnf(cnf_files)
 
-    bestAssignment, bestFitness = gsat(listofClauses, maxFlips, maxRestarts, numVariables)
+    # Folder path containing the CNF formula files
+    cnf_folder = "CNF Formulas"
 
-    print(f"Best assignment:  {bestAssignment}")
-    print(f"Best fitness:  {bestFitness} clauses satisfied, out of {noOfClauses}")
+    # Get a list of all CNF files in the folder
+    cnf_files = [os.path.join(cnf_folder, file) for file in os.listdir(cnf_folder) if file.endswith('.cnf')]
+
+    # Iterate over each file
+    for cnf_file in cnf_files:
+        print(f"Processing file: {cnf_file}")
+        try:
+            # Parse file
+            numVariables, noOfClauses, listofClauses = parseCnf([cnf_file])  # Pass the file path as a list
+                
+            # Run GSAT on file
+            bestAssignment, bestFitness, totalTime = gsat(listofClauses, maxFlips, maxRestarts, numVariables)
+                
+            # Print the results for the current file
+            print(f"Best assignment for {cnf_file}: {bestAssignment}")
+            print(f"Best fitness for {cnf_file}: {bestFitness} clauses satisfied, out of {noOfClauses}")
+            print(f"Total time to run: {totalTime}")
+            print("-" * 50)
+        except Exception as e:
+            print(f"Error processing file {cnf_file}: {e}")
 
 # Assign random true/false values to each variable
 def randomAssignment(numVariables):
@@ -112,6 +130,7 @@ def evaluateFitness(clauses, assignment):
 # Greedy SAT Algorithm
 def gsat(clauses, max_flips, max_restarts, numVariables):
 
+    startTime = time.time() #timer
     # Store best assignment and fitness we come across
     bestAssignment = None
     bestFitness = 0
@@ -159,7 +178,8 @@ def gsat(clauses, max_flips, max_restarts, numVariables):
                 bestFitness = longTermFAF
                 bestAssignment = assignment.copy()
 
-    return bestAssignment, bestFitness
+    totalTime = time.time() - startTime
+    return bestAssignment, bestFitness, totalTime
 
 
 

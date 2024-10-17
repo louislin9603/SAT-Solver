@@ -1,5 +1,0 @@
-c Example CNF with 4 variables (1, 2, 4, 5), but no variable 3
-p cnf 4 3
-1 -2 0
--1 4 0
--4 -2 0
