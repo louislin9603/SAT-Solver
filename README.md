@@ -11,6 +11,9 @@
 ## GSAT (Greedy SAT)
  GSAT is also a local search algorithm that iteratively flips variables that results in the greatest decrease in the number of unsatifised clauses, creating a "greedy" approach. Unlike WalkSAT, there is no randomization.
 
+## Writeup
+[Implementor's Notes](Implementor's_Notes.pdf) written by Louis Lin and Isaiah Huffman <br/> <br/>
+
 ### Running the Code
 **`SAT1.py`** contains class functions for DPLL and WalkSAT. Choose which SAT Solver to run (or both) in main().
 **`SAT2.py`** contains GSAT.
