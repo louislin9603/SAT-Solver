@@ -12,7 +12,7 @@
  GSAT is also a local search algorithm that iteratively flips variables that results in the greatest decrease in the number of unsatifised clauses, creating a "greedy" approach. Unlike WalkSAT, there is no randomization.
 
 ### Running the Code
-**SAT1.py** contains class functions for DPLL and WalkSAT. Choose which SAT Solver to run (or both) in main().
-**SAT2.py** contains GSAT.
+**`SAT1.py`** contains class functions for DPLL and WalkSAT. Choose which SAT Solver to run (or both) in main().
+**`SAT2.py`** contains GSAT.
 
-Both are standalone code that can be ran with just the file. Note that **CNF Formulas** should be in the same directory as the python files.
+Both are standalone code that can be ran with just the file. Note that **`CNF Formulas`** should be in the same directory as the python files.
