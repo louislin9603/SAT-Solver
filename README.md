@@ -3,7 +3,7 @@
 
 
 ## DPLL (Davis-Putnam-Logemann-Loveland)
- DPLL is a backtracking-based algorithm that combines unit propagationand pure literal elimination. It explores all possible variable assignments until it finds a solution or proves the formula is unsatisfiable.
+ DPLL is a backtracking-based algorithm that combines unit propagation and pure literal elimination. It explores all possible variable assignments until it finds a solution or proves the formula is unsatisfiable.
 
 ## WalkSAT
  WalkSAT is a local search algorithm that iteratively flips variables choosing between greedily minimizing the number of unsatisfied clauses and randomization.
